@@ -381,17 +381,21 @@ body {
   background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
   display: none; align-items: center; justify-content: center;
   z-index: 100;
+  padding: 16px;
 }
 .modal-overlay.open { display: flex; }
 .modal {
   background: var(--bg2); border-radius: var(--radius);
-  width: 420px; max-width: 95vw;
+  width: 420px; max-width: 100%;
+  max-height: 90vh;
+  display: flex; flex-direction: column;
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
   border: 1px solid var(--border);
 }
 .modal-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 18px 20px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 .modal-header h2 { font-size: 16px; font-weight: 700; }
 .modal-close {
@@ -403,11 +407,14 @@ body {
 .modal-body {
   padding: 20px;
   display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
 .modal-body label { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: -4px; }
 .modal-footer {
   display: flex; justify-content: flex-end; gap: 10px;
   padding: 16px 20px; border-top: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 /* ─── Scrollbar ─── */
@@ -415,15 +422,94 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+/* ─── Touch — убрать задержку и сдвиг при тапе ─── */
+button, a, input, select, textarea, label {
+  touch-action: manipulation;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 900px) {
   .cards-row { grid-template-columns: repeat(2,1fr); }
   .two-col { grid-template-columns: 1fr; }
   .settings-grid { grid-template-columns: 1fr; }
 }
+
 @media (max-width: 640px) {
-  .sidebar { width: 60px; }
-  .logo-text, .nav-item span:last-child, .sidebar-balance { display: none; }
-  .main { padding: 16px; }
-  .cards-row { grid-template-columns: 1fr 1fr; }
+  /* Перестроить layout: контент сверху, навигация снизу */
+  .app {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* Сайдбар → нижняя панель */
+  .sidebar {
+    width: 100%;
+    height: 62px;
+    flex-direction: row;
+    flex-shrink: 0;
+    order: 2;
+    padding: 0;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .logo, .sidebar-balance { display: none; }
+  .nav {
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
+    width: 100%;
+    justify-content: space-around;
+    align-items: stretch;
+  }
+  .nav-item {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 2px;
+    gap: 3px;
+    font-size: 10px;
+    border-radius: 0;
+  }
+  .nav-icon { font-size: 20px; }
+
+  /* Основной контент */
+  .main {
+    flex: 1;
+    order: 1;
+    padding: 16px 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Карточки — 2 колонки */
+  .cards-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { padding: 12px 14px; }
+  .card-value { font-size: 17px; }
+
+  /* Заголовки */
+  .page-header { margin-bottom: 16px; }
+  .page-header h1 { font-size: 18px; }
+
+  /* Модалки — снизу экрана */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal, .modal-wide {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  /* Таблица — скролл по горизонтали */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { min-width: 420px; }
+
+  /* Фильтры — в колонку */
+  .filter-row { flex-wrap: wrap; }
+  .select-filter { flex: 1; min-width: 120px; }
+
+  /* Цели — 1 колонка */
+  .goals-grid { grid-template-columns: 1fr; }
 }
