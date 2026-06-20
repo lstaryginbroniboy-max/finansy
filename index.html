@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Финансы — Личный бюджет</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">₽</span>
+        <span class="logo-text">Финансы</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <span class="nav-icon">🏠</span><span>Главная</span>
+        </button>
+        <button class="nav-item" data-tab="income">
+          <span class="nav-icon">📈</span><span>Доходы</span>
+        </button>
+        <button class="nav-item" data-tab="expenses">
+          <span class="nav-icon">📉</span><span>Расходы</span>
+        </button>
+        <button class="nav-item" data-tab="goals">
+          <span class="nav-icon">🎯</span><span>Цели</span>
+        </button>
+        <button class="nav-item" data-tab="stats">
+          <span class="nav-icon">📊</span><span>Статистика</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <span class="nav-icon">⚙️</span><span>Настройки</span>
+        </button>
+      </nav>
+      <div class="sidebar-balance">
+        <div class="balance-label">Баланс</div>
+        <div class="balance-value" id="sidebarBalance">0 ₽</div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section class="tab active" id="tab-dashboard">
+        <div class="page-header">
+          <h1>Главная</h1>
+          <span class="date-badge" id="currentDate"></span>
+        </div>
+        <div class="cards-row">
+          <div class="card card-green">
+            <div class="card-label">Доходы в этом месяце</div>
+            <div class="card-value" id="dashIncome">0 ₽</div>
+          </div>
+          <div class="card card-red">
+            <div class="card-label">Расходы в этом месяце</div>
+            <div class="card-value" id="dashExpense">0 ₽</div>
+          </div>
+          <div class="card card-blue">
+            <div class="card-label">Баланс</div>
+            <div class="card-value" id="dashBalance">0 ₽</div>
+          </div>
+          <div class="card card-purple">
+            <div class="card-label">Активных целей</div>
+            <div class="card-value" id="dashGoals">0</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="section-box">
+            <h2>Последние операции</h2>
+            <div id="recentTransactions" class="transaction-list"></div>
+          </div>
+          <div class="section-box">
+            <h2>Расходы по категориям</h2>
+            <div class="chart-wrap"><canvas id="dashPieChart"></canvas></div>
+          </div>
+        </div>
+        <div class="two-col mt-16">
+          <div class="section-box">
+            <h2>Доходы по категориям</h2>
+            <div class="chart-wrap"><canvas id="dashIncomePieChart"></canvas></div>
+          </div>
+          <div class="section-box" id="dashIncomePieEmpty" style="display:none">
+          </div>
+        </div>
+      </section>
+
+      <!-- INCOME -->
+      <section class="tab" id="tab-income">
+        <div class="page-header">
+          <h1>Доходы</h1>
+          <button class="btn-primary" id="openIncomeModal">+ Добавить доход</button>
+        </div>
+        <div class="filter-row">
+          <select id="incomeMonthFilter" class="select-filter"></select>
+          <select id="incomeCatFilter" class="select-filter">
+            <option value="">Все категории</option>
+          </select>
+        </div>
+        <div class="summary-row">
+          <div class="summary-chip green">Итого: <strong id="incomeTotalLabel">0 ₽</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Дата</th><th>Описание</th><th>Категория</th><th>Сумма</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="incomeTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="incomeEmpty">Пока нет доходов. Добавьте первый!</div>
+        </div>
+      </section>
+
+      <!-- EXPENSES -->
+      <section class="tab" id="tab-expenses">
+        <div class="page-header">
+          <h1>Расходы</h1>
+          <button class="btn-primary" id="openExpenseModal">+ Добавить расход</button>
+        </div>
+        <div class="filter-row">
+          <select id="expenseMonthFilter" class="select-filter"></select>
+          <select id="expenseCatFilter" class="select-filter">
+            <option value="">Все категории</option>
+          </select>
+        </div>
+        <div class="summary-row">
+          <div class="summary-chip red">Итого: <strong id="expenseTotalLabel">0 ₽</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Дата</th><th>Описание</th><th>Категория</th><th>Сумма</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="expenseTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="expenseEmpty">Пока нет расходов. Добавьте первый!</div>
+        </div>
+      </section>
+
+      <!-- GOALS -->
+      <section class="tab" id="tab-goals">
+        <div class="page-header">
+          <h1>Цели</h1>
+          <button class="btn-primary" id="openGoalModal">+ Добавить цель</button>
+        </div>
+        <div id="goalsGrid" class="goals-grid"></div>
+        <div class="empty-state" id="goalsEmpty">Пока нет целей. Добавьте первую!</div>
+      </section>
+
+      <!-- STATS -->
+      <section class="tab" id="tab-stats">
+        <div class="page-header">
+          <h1>Статистика</h1>
+          <select id="statsYear" class="select-filter"></select>
+        </div>
+        <div class="cards-row">
+          <div class="card card-green">
+            <div class="card-label">Доходы за год</div>
+            <div class="card-value" id="statsYearIncome">0 ₽</div>
+          </div>
+          <div class="card card-red">
+            <div class="card-label">Расходы за год</div>
+            <div class="card-value" id="statsYearExpense">0 ₽</div>
+          </div>
+          <div class="card card-blue">
+            <div class="card-label">Экономия за год</div>
+            <div class="card-value" id="statsYearSave">0 ₽</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="section-box">
+            <h2>Доходы и расходы по месяцам</h2>
+            <div class="chart-wrap"><canvas id="statsBarChart"></canvas></div>
+          </div>
+          <div class="section-box">
+            <h2>Структура расходов</h2>
+            <div class="chart-wrap"><canvas id="statsPieChart"></canvas></div>
+          </div>
+        </div>
+        <div class="two-col mt-16">
+          <div class="section-box">
+            <h2>Структура доходов</h2>
+            <div class="chart-wrap"><canvas id="statsIncomePieChart"></canvas></div>
+          </div>
+          <div class="section-box">
+            <h2>Динамика баланса</h2>
+            <div class="chart-wrap"><canvas id="statsLineChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="tab" id="tab-settings">
+        <div class="page-header"><h1>Настройки</h1></div>
+        <div class="settings-grid">
+          <div class="section-box">
+            <h2>Общие</h2>
+            <div class="setting-row">
+              <label>Валюта</label>
+              <select id="setCurrency" class="select-filter">
+                <option value="₽">Рубль (₽)</option>
+                <option value="$">Доллар ($)</option>
+                <option value="€">Евро (€)</option>
+                <option value="£">Фунт (£)</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label>Тема</label>
+              <select id="setTheme" class="select-filter">
+                <option value="light">Светлая</option>
+                <option value="dark">Тёмная</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label>Начало недели</label>
+              <select id="setWeekStart" class="select-filter">
+                <option value="mon">Понедельник</option>
+                <option value="sun">Воскресенье</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h2>Категории доходов</h2>
+            <div id="incomeCatList" class="cat-list"></div>
+            <div class="cat-add-row">
+              <input id="newIncomeCat" class="input-text" placeholder="Новая категория…" />
+              <button class="btn-secondary" id="addIncomeCat">Добавить</button>
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h2>Категории расходов</h2>
+            <div id="expenseCatList" class="cat-list"></div>
+            <div class="cat-add-row">
+              <input id="newExpenseCat" class="input-text" placeholder="Новая категория…" />
+              <button class="btn-secondary" id="addExpenseCat">Добавить</button>
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h2>Данные</h2>
+            <div class="setting-row col">
+              <button class="btn-secondary" id="exportData">⬇ Экспорт в JSON</button>
+              <button class="btn-secondary" id="importDataBtn">⬆ Импорт из JSON</button>
+              <input type="file" id="importFileInput" accept=".json" style="display:none"/>
+              <button class="btn-danger" id="clearData">🗑 Очистить все данные</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: Income -->
+  <div class="modal-overlay" id="incomeModal">
+    <div class="modal">
+      <div class="modal-header"><h2>Добавить доход</h2><button class="modal-close" data-close="incomeModal">✕</button></div>
+      <div class="modal-body">
+        <label>Дата</label>
+        <input type="date" id="incomeDate" class="input-text" />
+        <label>Описание</label>
+        <input type="text" id="incomeDesc" class="input-text" placeholder="Зарплата, фриланс…" />
+        <label>Категория</label>
+        <select id="incomeCat" class="input-text"></select>
+        <label>Сумма</label>
+        <input type="number" id="incomeAmount" class="input-text" placeholder="0" min="0" />
+        <label>Повторение</label>
+        <select id="incomeRepeat" class="input-text">
+          <option value="none">Без повторения</option>
+          <option value="monthly">Ежемесячно</option>
+          <option value="weekly">Еженедельно</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="incomeModal">Отмена</button>
+        <button class="btn-primary" id="saveIncome">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Expense -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal">
+      <div class="modal-header"><h2>Добавить расход</h2><button class="modal-close" data-close="expenseModal">✕</button></div>
+      <div class="modal-body">
+        <label>Дата</label>
+        <input type="date" id="expenseDate" class="input-text" />
+        <label>Описание</label>
+        <input type="text" id="expenseDesc" class="input-text" placeholder="Продукты, транспорт…" />
+        <label>Категория</label>
+        <select id="expenseCat" class="input-text"></select>
+        <label>Сумма</label>
+        <input type="number" id="expenseAmount" class="input-text" placeholder="0" min="0" />
+        <label>Повторение</label>
+        <select id="expenseRepeat" class="input-text">
+          <option value="none">Без повторения</option>
+          <option value="monthly">Ежемесячно</option>
+          <option value="weekly">Еженедельно</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="expenseModal">Отмена</button>
+        <button class="btn-primary" id="saveExpense">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Goal -->
+  <div class="modal-overlay" id="goalModal">
+    <div class="modal modal-wide">
+      <div class="modal-header"><h2>Добавить цель</h2><button class="modal-close" data-close="goalModal">✕</button></div>
+      <div class="modal-body">
+        <label>Название цели</label>
+        <input type="text" id="goalName" class="input-text" placeholder="Отпуск, iPhone, машина…" />
+        <label>Целевая сумма</label>
+        <input type="number" id="goalTarget" class="input-text" placeholder="100000" min="0" />
+        <label>Уже накоплено</label>
+        <input type="number" id="goalCurrent" class="input-text" placeholder="0" min="0" />
+        <label>Дата достижения</label>
+        <input type="date" id="goalDate" class="input-text" />
+        <label>Частота откладывания</label>
+        <select id="goalFrequency" class="input-text">
+          <option value="daily">Каждый день</option>
+          <option value="weekly" selected>Каждую неделю</option>
+          <option value="monthly">Каждый месяц</option>
+        </select>
+        <label>Цвет</label>
+        <input type="color" id="goalColor" class="input-color" value="#6366f1" />
+
+        <div class="modal-divider"></div>
+        <div class="reward-section-label">🎁 Награда за достижение цели</div>
+        <label>Описание награды</label>
+        <textarea id="goalRewardText" class="input-text input-textarea" placeholder="Например: поехать на море, купить новый ноутбук…"></textarea>
+        <label>Фото награды</label>
+        <div class="photo-upload-area" id="goalPhotoArea" onclick="document.getElementById('goalRewardPhoto').click()">
+          <input type="file" id="goalRewardPhoto" accept="image/*" style="display:none" />
+          <div id="goalPhotoPreview" class="photo-preview-empty">
+            <span class="photo-upload-icon">📷</span>
+            <span>Нажмите, чтобы прикрепить фото</span>
+          </div>
+        </div>
+        <input type="hidden" id="goalRewardPhotoData" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="goalModal">Отмена</button>
+        <button class="btn-primary" id="saveGoal">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add to Goal -->
+  <div class="modal-overlay" id="goalDepositModal">
+    <div class="modal">
+      <div class="modal-header"><h2 id="goalDepositTitle">Пополнить цель</h2><button class="modal-close" data-close="goalDepositModal">✕</button></div>
+      <div class="modal-body">
+        <label>Сумма пополнения</label>
+        <input type="number" id="goalDepositAmount" class="input-text" placeholder="0" min="0" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="goalDepositModal">Отмена</button>
+        <button class="btn-primary" id="saveGoalDeposit">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
