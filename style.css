@@ -441,15 +441,16 @@ button, a, input, select, textarea, label {
     height: 100vh;
   }
 
-  /* Сайдбар → нижняя панель */
+  /* Сайдбар → фиксированная нижняя панель */
   .sidebar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
     width: 100%;
     height: 62px;
     flex-direction: row;
-    flex-shrink: 0;
-    order: 2;
     padding: 0;
-    border-top: 1px solid rgba(255,255,255,.08);
+    border-top: 1px solid rgba(255,255,255,.12);
+    z-index: 50;
   }
   .logo, .sidebar-balance { display: none; }
   .nav {
@@ -472,12 +473,12 @@ button, a, input, select, textarea, label {
   }
   .nav-icon { font-size: 20px; }
 
-  /* Основной контент */
+  /* Основной контент — отступ снизу под панель */
+  .app { display: block; height: auto; }
   .main {
-    flex: 1;
-    order: 1;
-    padding: 16px 14px;
+    padding: 16px 14px 80px;
     overflow-y: auto;
+    min-height: 100vh;
     -webkit-overflow-scrolling: touch;
   }
 
