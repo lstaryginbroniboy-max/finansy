@@ -28,9 +28,6 @@
         <button class="nav-item" data-tab="goals">
           <span class="nav-icon">🎯</span><span>Цели</span>
         </button>
-        <button class="nav-item" data-tab="stats">
-          <span class="nav-icon">📊</span><span>Статистика</span>
-        </button>
         <button class="nav-item" data-tab="settings">
           <span class="nav-icon">⚙️</span><span>Настройки</span>
         </button>
@@ -51,15 +48,15 @@
           <span class="date-badge" id="currentDate"></span>
         </div>
         <div class="cards-row">
-          <div class="card card-green">
+          <div class="card card-green card-clickable" onclick="openDashModal('income')">
             <div class="card-label">Доходы в этом месяце</div>
             <div class="card-value" id="dashIncome">0 ₽</div>
           </div>
-          <div class="card card-red">
+          <div class="card card-red card-clickable" onclick="openDashModal('expense')">
             <div class="card-label">Расходы в этом месяце</div>
             <div class="card-value" id="dashExpense">0 ₽</div>
           </div>
-          <div class="card card-blue">
+          <div class="card card-blue card-clickable" onclick="openDashModal('balance')">
             <div class="card-label">Баланс</div>
             <div class="card-value" id="dashBalance">0 ₽</div>
           </div>
@@ -152,48 +149,6 @@
         </div>
         <div id="goalsGrid" class="goals-grid"></div>
         <div class="empty-state" id="goalsEmpty">Пока нет целей. Добавьте первую!</div>
-      </section>
-
-      <!-- STATS -->
-      <section class="tab" id="tab-stats">
-        <div class="page-header">
-          <h1>Статистика</h1>
-          <select id="statsYear" class="select-filter"></select>
-        </div>
-        <div class="cards-row">
-          <div class="card card-green">
-            <div class="card-label">Доходы за год</div>
-            <div class="card-value" id="statsYearIncome">0 ₽</div>
-          </div>
-          <div class="card card-red">
-            <div class="card-label">Расходы за год</div>
-            <div class="card-value" id="statsYearExpense">0 ₽</div>
-          </div>
-          <div class="card card-blue">
-            <div class="card-label">Экономия за год</div>
-            <div class="card-value" id="statsYearSave">0 ₽</div>
-          </div>
-        </div>
-        <div class="two-col">
-          <div class="section-box">
-            <h2>Доходы и расходы по месяцам</h2>
-            <div class="chart-wrap"><canvas id="statsBarChart"></canvas></div>
-          </div>
-          <div class="section-box">
-            <h2>Структура расходов</h2>
-            <div class="chart-wrap"><canvas id="statsPieChart"></canvas></div>
-          </div>
-        </div>
-        <div class="two-col mt-16">
-          <div class="section-box">
-            <h2>Структура доходов</h2>
-            <div class="chart-wrap"><canvas id="statsIncomePieChart"></canvas></div>
-          </div>
-          <div class="section-box">
-            <h2>Динамика баланса</h2>
-            <div class="chart-wrap"><canvas id="statsLineChart"></canvas></div>
-          </div>
-        </div>
       </section>
 
       <!-- SETTINGS -->
@@ -382,6 +337,22 @@
       <div class="modal-body" id="goalHistoryBody"></div>
       <div class="modal-footer">
         <button class="btn-secondary" data-close="goalHistoryModal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Dash Chart -->
+  <div class="modal-overlay" id="dashChartModal">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="dashChartTitle">Статистика</h2>
+        <button class="modal-close" data-close="dashChartModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="chart-wrap" style="height:320px"><canvas id="dashChartCanvas"></canvas></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="dashChartModal">Закрыть</button>
       </div>
     </div>
   </div>

@@ -24,7 +24,7 @@ let state = {
   })
 };
 
-let dashPieChart = null, dashIncomePieChart = null, statsBarChart = null, statsPieChart = null, statsIncomePieChart = null, statsLineChart = null;
+let dashPieChart = null, dashIncomePieChart = null, dashChartInst = null;
 
 // ── Util ─────────────────────────────────────
 const fmt = (n) => {
@@ -80,7 +80,6 @@ function refreshTab(name) {
   if (name === 'income')    renderIncome();
   if (name === 'expenses')  renderExpenses();
   if (name === 'goals')     renderGoals();
-  if (name === 'stats')     renderStats();
   if (name === 'settings')  renderSettings();
 }
 
@@ -442,109 +441,81 @@ document.getElementById('saveGoalDeposit').addEventListener('click', () => {
 });
 
 // ═══════════════════════════════════════════════
-// STATS
+// DASH CHART MODAL
 // ═══════════════════════════════════════════════
-function renderStats() {
-  const yearSel = document.getElementById('statsYear');
-  const years = [...new Set([
-    ...state.income.map(t => t.date.slice(0,4)),
-    ...state.expenses.map(t => t.date.slice(0,4))
-  ])].sort().reverse();
-  if (!years.length) years.push(new Date().getFullYear().toString());
+const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
 
-  const curYear = yearSel.value || years[0];
-  yearSel.innerHTML = years.map(y => `<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`).join('');
+window.openDashModal = function(type) {
+  const titles = {
+    income:  'Структура доходов',
+    expense: 'Структура расходов',
+    balance: 'Доходы и расходы по месяцам'
+  };
+  document.getElementById('dashChartTitle').textContent = titles[type];
+  openModal('dashChartModal');
 
-  const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-  const incData = Array(12).fill(0);
-  const expData = Array(12).fill(0);
+  if (dashChartInst) { dashChartInst.destroy(); dashChartInst = null; }
 
-  state.income.filter(t => t.date.slice(0,4) === curYear)
-    .forEach(t => { incData[parseInt(t.date.slice(5,7)) - 1] += Number(t.amount); });
-  state.expenses.filter(t => t.date.slice(0,4) === curYear)
-    .forEach(t => { expData[parseInt(t.date.slice(5,7)) - 1] += Number(t.amount); });
+  const canvas = document.getElementById('dashChartCanvas');
+  const curMonth = today().slice(0, 7);
+  const curYear  = today().slice(0, 4);
 
-  const totalInc = incData.reduce((s,v) => s+v, 0);
-  const totalExp = expData.reduce((s,v) => s+v, 0);
-  document.getElementById('statsYearIncome').textContent  = fmt(totalInc);
-  document.getElementById('statsYearExpense').textContent = fmt(totalExp);
-  document.getElementById('statsYearSave').textContent    = fmt(totalInc - totalExp);
-
-  // Bar chart
-  if (statsBarChart) { statsBarChart.destroy(); statsBarChart = null; }
-  statsBarChart = new Chart(document.getElementById('statsBarChart'), {
-    type: 'bar',
-    data: {
-      labels: MONTHS,
-      datasets: [
-        { label: 'Доходы', data: incData, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4 },
-        { label: 'Расходы', data: expData, backgroundColor: 'rgba(239,68,68,.7)', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
-      scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } }
+  if (type === 'income') {
+    const catMap = {};
+    state.income.filter(t => t.date.slice(0,7) === curMonth)
+      .forEach(t => { catMap[t.category] = (catMap[t.category] || 0) + Number(t.amount); });
+    if (!Object.keys(catMap).length) {
+      canvas.parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Нет доходов в этом месяце</div>';
+      return;
     }
-  });
-
-  // Pie chart — expense categories for year
-  const expCatMap = {};
-  state.expenses.filter(t => t.date.slice(0,4) === curYear)
-    .forEach(t => { expCatMap[t.category] = (expCatMap[t.category] || 0) + Number(t.amount); });
-  if (statsPieChart) { statsPieChart.destroy(); statsPieChart = null; }
-  if (Object.keys(expCatMap).length) {
-    statsPieChart = new Chart(document.getElementById('statsPieChart'), {
+    dashChartInst = new Chart(canvas, {
       type: 'doughnut',
       data: {
-        labels: Object.keys(expCatMap),
-        datasets: [{ data: Object.values(expCatMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
+        labels: Object.keys(catMap),
+        datasets: [{ data: Object.values(catMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } } }, cutout: '55%' }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } }, cutout: '55%' }
     });
-  }
-
-  // Pie chart — income categories for year
-  const incCatMap = {};
-  state.income.filter(t => t.date.slice(0,4) === curYear)
-    .forEach(t => { incCatMap[t.category] = (incCatMap[t.category] || 0) + Number(t.amount); });
-  if (statsIncomePieChart) { statsIncomePieChart.destroy(); statsIncomePieChart = null; }
-  if (Object.keys(incCatMap).length) {
-    statsIncomePieChart = new Chart(document.getElementById('statsIncomePieChart'), {
+  } else if (type === 'expense') {
+    const catMap = {};
+    state.expenses.filter(t => t.date.slice(0,7) === curMonth)
+      .forEach(t => { catMap[t.category] = (catMap[t.category] || 0) + Number(t.amount); });
+    if (!Object.keys(catMap).length) {
+      canvas.parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Нет расходов в этом месяце</div>';
+      return;
+    }
+    dashChartInst = new Chart(canvas, {
       type: 'doughnut',
       data: {
-        labels: Object.keys(incCatMap),
-        datasets: [{ data: Object.values(incCatMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
+        labels: Object.keys(catMap),
+        datasets: [{ data: Object.values(catMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } } }, cutout: '55%' }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } }, cutout: '55%' }
+    });
+  } else {
+    const incData = Array(12).fill(0);
+    const expData = Array(12).fill(0);
+    state.income.filter(t => t.date.slice(0,4) === curYear)
+      .forEach(t => { incData[parseInt(t.date.slice(5,7)) - 1] += Number(t.amount); });
+    state.expenses.filter(t => t.date.slice(0,4) === curYear)
+      .forEach(t => { expData[parseInt(t.date.slice(5,7)) - 1] += Number(t.amount); });
+    dashChartInst = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: MONTHS,
+        datasets: [
+          { label: 'Доходы', data: incData, backgroundColor: 'rgba(34,197,94,.7)', borderRadius: 4 },
+          { label: 'Расходы', data: expData, backgroundColor: 'rgba(239,68,68,.7)', borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+        scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } }
+      }
     });
   }
-
-  // Line chart — cumulative balance
-  const lineData = MONTHS.map((_, i) => incData[i] - expData[i]);
-  let cumulative = 0;
-  const cumData = lineData.map(v => { cumulative += v; return cumulative; });
-
-  if (statsLineChart) { statsLineChart.destroy(); statsLineChart = null; }
-  statsLineChart = new Chart(document.getElementById('statsLineChart'), {
-    type: 'line',
-    data: {
-      labels: MONTHS,
-      datasets: [{
-        label: 'Баланс', data: cumData,
-        borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,.1)',
-        fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#6366f1'
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } }
-    }
-  });
-}
-
-document.getElementById('statsYear').addEventListener('change', renderStats);
+};
 
 // ═══════════════════════════════════════════════
 // SETTINGS
