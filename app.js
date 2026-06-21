@@ -499,6 +499,8 @@ function renderCatList(containerId, cats, type) {
 
 window.deleteCat = function(type, idx) {
   const key = type === 'income' ? 'incomeCats' : 'expenseCats';
+  const name = state.settings[key][idx];
+  if (!confirm(`Удалить категорию «${name}»?`)) return;
   state.settings[key].splice(idx, 1);
   save(); renderSettings();
 };
