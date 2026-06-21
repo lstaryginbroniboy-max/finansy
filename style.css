@@ -136,14 +136,18 @@ body {
 }
 .card-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
 .card-value { font-size: 22px; font-weight: 700; }
-.card-green { border-left: 4px solid var(--green); }
-.card-green .card-value { color: var(--green); }
-.card-red { border-left: 4px solid var(--red); }
-.card-red .card-value { color: var(--red); }
-.card-blue { border-left: 4px solid var(--blue); }
-.card-blue .card-value { color: var(--blue); }
-.card-purple { border-left: 4px solid var(--purple); }
-.card-purple .card-value { color: var(--purple); }
+.card-green { background: var(--green); border-color: var(--green); }
+.card-green .card-label { color: rgba(255,255,255,0.8); }
+.card-green .card-value { color: #ffffff; }
+.card-red { background: var(--red); border-color: var(--red); }
+.card-red .card-label { color: rgba(255,255,255,0.8); }
+.card-red .card-value { color: #ffffff; }
+.card-blue { background: var(--blue); border-color: var(--blue); }
+.card-blue .card-label { color: rgba(255,255,255,0.8); }
+.card-blue .card-value { color: #ffffff; }
+.card-purple { background: var(--purple); border-color: var(--purple); }
+.card-purple .card-label { color: rgba(255,255,255,0.8); }
+.card-purple .card-value { color: #ffffff; }
 
 /* ─── Two column layout ─── */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
