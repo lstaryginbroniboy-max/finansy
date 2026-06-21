@@ -24,7 +24,7 @@ let state = {
   })
 };
 
-let dashPieChart = null, dashIncomePieChart = null, dashChartInst = null;
+let dashChartInst = null;
 
 // ── Util ─────────────────────────────────────
 const fmt = (n) => {
@@ -135,45 +135,6 @@ function renderDashboard() {
       </div>`).join('');
   }
 
-  // Pie chart — expenses by category this month
-  const expThisMonth = state.expenses.filter(t => t.date.slice(0,7) === now);
-  const expCatMap = {};
-  expThisMonth.forEach(t => { expCatMap[t.category] = (expCatMap[t.category] || 0) + Number(t.amount); });
-
-  if (dashPieChart) { dashPieChart.destroy(); dashPieChart = null; }
-  const expCanvas = document.getElementById('dashPieChart');
-  if (Object.keys(expCatMap).length) {
-    dashPieChart = new Chart(expCanvas, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(expCatMap),
-        datasets: [{ data: Object.values(expCatMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
-      },
-      options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } }, cutout: '60%', responsive: true, maintainAspectRatio: false }
-    });
-  } else {
-    expCanvas.getContext('2d').clearRect(0, 0, expCanvas.width, expCanvas.height);
-  }
-
-  // Pie chart — income by category this month
-  const incThisMonth = state.income.filter(t => t.date.slice(0,7) === now);
-  const incCatMap = {};
-  incThisMonth.forEach(t => { incCatMap[t.category] = (incCatMap[t.category] || 0) + Number(t.amount); });
-
-  if (dashIncomePieChart) { dashIncomePieChart.destroy(); dashIncomePieChart = null; }
-  const incCanvas = document.getElementById('dashIncomePieChart');
-  if (Object.keys(incCatMap).length) {
-    dashIncomePieChart = new Chart(incCanvas, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(incCatMap),
-        datasets: [{ data: Object.values(incCatMap), backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }]
-      },
-      options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } }, cutout: '60%', responsive: true, maintainAspectRatio: false }
-    });
-  } else {
-    incCanvas.getContext('2d').clearRect(0, 0, incCanvas.width, incCanvas.height);
-  }
 }
 
 const PALETTE = [
