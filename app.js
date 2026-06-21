@@ -187,7 +187,6 @@ function renderIncome() {
   tbody.innerHTML = rows.map(t => `
     <tr>
       <td>${formatDate(t.date)}</td>
-      <td>${t.desc || '—'}</td>
       <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
       <td style="color:var(--green);font-weight:600">+${fmt(t.amount)}</td>
       <td><button class="btn-icon" onclick="deleteTransaction('income','${t.id}')">🗑</button></td>
@@ -232,7 +231,6 @@ function renderExpenses() {
   tbody.innerHTML = rows.map(t => `
     <tr>
       <td>${formatDate(t.date)}</td>
-      <td>${t.desc || '—'}</td>
       <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
       <td style="color:var(--red);font-weight:600">-${fmt(t.amount)}</td>
       <td><button class="btn-icon" onclick="deleteTransaction('expenses','${t.id}')">🗑</button></td>
