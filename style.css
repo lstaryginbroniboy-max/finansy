@@ -41,6 +41,34 @@ body.dark {
   --blue-bg: #0c1a35;
   --purple-bg: #1a0f2e;
 }
+body.theme-green {
+  --sidebar-bg: #14532d;
+  --sidebar-text: #bbf7d0;
+  --sidebar-active-bg: #16a34a;
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+}
+body.theme-blue {
+  --sidebar-bg: #1e3a5f;
+  --sidebar-text: #bfdbfe;
+  --sidebar-active-bg: #2563eb;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+}
+body.theme-orange {
+  --sidebar-bg: #431407;
+  --sidebar-text: #fed7aa;
+  --sidebar-active-bg: #ea580c;
+  --accent: #ea580c;
+  --accent-hover: #c2410c;
+}
+body.theme-rose {
+  --sidebar-bg: #4c0519;
+  --sidebar-text: #fecdd3;
+  --sidebar-active-bg: #e11d48;
+  --accent: #e11d48;
+  --accent-hover: #be123c;
+}
 
 body {
   font-family: var(--font);
@@ -360,6 +388,13 @@ body {
 }
 .setting-row:last-child { border-bottom: none; }
 .setting-row label { font-size: 13px; color: var(--text); }
+.setting-select {
+  padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg2); color: var(--text); font-size: 13px;
+  cursor: pointer; outline: none; font-family: var(--font);
+  max-width: 140px; min-width: 80px;
+}
+.setting-select:focus { border-color: var(--accent); }
 .setting-row.col { flex-direction: column; align-items: stretch; gap: 10px; }
 
 .cat-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; max-height: 160px; overflow-y: auto; }

@@ -116,7 +116,7 @@ function renderDashboard() {
   const all = [
     ...state.income.map(t => ({ ...t, type: 'income' })),
     ...state.expenses.map(t => ({ ...t, type: 'expense' }))
-  ].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 8);
+  ].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 11);
 
   const container = document.getElementById('recentTransactions');
   if (!all.length) {
@@ -517,7 +517,9 @@ window.deleteCat = function(type, idx) {
 });
 
 function applyTheme(t) {
-  document.body.classList.toggle('dark', t === 'dark');
+  document.body.classList.remove('dark','theme-green','theme-blue','theme-orange','theme-rose');
+  if (t === 'dark') document.body.classList.add('dark');
+  else if (t !== 'light') document.body.classList.add('theme-' + t);
 }
 
 document.getElementById('addIncomeCat').addEventListener('click', () => {
