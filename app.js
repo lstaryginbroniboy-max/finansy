@@ -60,6 +60,7 @@ function switchTab(name) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  localStorage.setItem('fin_active_tab', name);
   refreshTab(name);
 }
 
@@ -796,4 +797,6 @@ function populateCatSelect(id, cats) {
 // INIT
 // ═══════════════════════════════════════════════
 applyTheme(state.settings.theme);
-refreshAll();
+const savedTab = localStorage.getItem('fin_active_tab') || 'dashboard';
+switchTab(savedTab);
+updateSidebar();
