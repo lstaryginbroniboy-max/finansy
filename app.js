@@ -365,14 +365,36 @@ function renderGoals() {
         ${weeklyBlock}
         ${done ? '<div class="goal-done-badge">✅ Цель достигнута!</div>' : ''}
         ${rewardBlock}
-        ${!done ? `
         <div class="goal-btn-row">
-          <button class="btn-deposit" onclick="openDeposit('${g.id}','add')">+ Пополнить</button>
-          <button class="btn-deposit btn-withdraw" onclick="openDeposit('${g.id}','sub')">− Снять</button>
-        </div>` : ''}
+          ${!done ? `<button class="btn-deposit" onclick="openDeposit('${g.id}','add')">+ Пополнить</button>` : ''}
+          ${!done ? `<button class="btn-deposit btn-withdraw" onclick="openDeposit('${g.id}','sub')">− Снять</button>` : ''}
+          <button class="btn-deposit btn-history" onclick="openGoalHistory('${g.id}')">📋 История</button>
+        </div>
       </div>`;
   }).join('');
 }
+
+window.openGoalHistory = function(id) {
+  const g = state.goals.find(g => g.id === id);
+  if (!g) return;
+  document.getElementById('goalHistoryTitle').textContent = 'История: ' + g.name;
+  const history = (g.history || []).slice().reverse();
+  const body = document.getElementById('goalHistoryBody');
+  if (!history.length) {
+    body.innerHTML = '<div class="history-empty">Операций пока нет</div>';
+  } else {
+    body.innerHTML = history.map(h => `
+      <div class="history-item">
+        <div class="history-icon ${h.type}">${h.type === 'add' ? '💰' : '💸'}</div>
+        <div class="history-info">
+          <div class="history-label">${h.type === 'add' ? 'Пополнение' : 'Снятие'}</div>
+          <div class="history-date">${new Date(h.date + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+        </div>
+        <div class="history-amount ${h.type}">${h.type === 'add' ? '+' : '−'}${fmt(h.amount)}</div>
+      </div>`).join('');
+  }
+  openModal('goalHistoryModal');
+};
 
 window.deleteGoal = function(id) {
   if (!confirm('Удалить цель?')) return;
@@ -406,11 +428,14 @@ document.getElementById('saveGoalDeposit').addEventListener('click', () => {
   if (!amt || amt <= 0) return alert('Введите сумму');
   const g = state.goals.find(g => g.id === depositGoalId);
   if (!g) return;
+  if (!g.history) g.history = [];
   if (depositMode === 'add') {
     g.current = Math.min(g.target, g.current + amt);
+    g.history.push({ date: today(), type: 'add', amount: amt });
   } else {
     if (amt > g.current) return alert(`Нельзя снять больше накопленного (${fmt(g.current)})`);
     g.current = g.current - amt;
+    g.history.push({ date: today(), type: 'sub', amount: amt });
   }
   save(); closeModal('goalDepositModal'); renderGoals();
 });

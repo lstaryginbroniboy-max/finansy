@@ -258,6 +258,28 @@ body {
 .btn-deposit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn-withdraw { border-color: #fca5a5; color: var(--red); }
 .btn-withdraw:hover { background: var(--red); color: #fff; border-color: var(--red); }
+.btn-history { border-color: var(--border); color: var(--text2); }
+.btn-history:hover { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
+
+/* ─── Goal History ─── */
+.history-empty { text-align: center; padding: 32px; color: var(--text2); font-size: 13px; }
+.history-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.history-item:last-child { border-bottom: none; }
+.history-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.history-icon.add { background: var(--green-bg); }
+.history-icon.sub { background: var(--red-bg); }
+.history-info { flex: 1; }
+.history-label { font-size: 13px; font-weight: 600; }
+.history-date { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.history-amount { font-size: 14px; font-weight: 700; }
+.history-amount.add { color: var(--green); }
+.history-amount.sub { color: var(--red); }
 .goal-done-badge {
   display: inline-block; padding: 2px 8px;
   background: var(--green-bg); color: var(--green);
