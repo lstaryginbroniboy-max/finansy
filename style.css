@@ -533,16 +533,20 @@ button, a, input, select, textarea, label {
   .filter-row { flex-wrap: wrap; }
   .select-filter { flex: 1; min-width: 120px; }
 
-  /* Цели — 1 колонка, компактные карточки */
-  .goals-grid { grid-template-columns: 1fr; gap: 10px; }
-  .goal-card { padding: 12px 14px; }
-  .goal-name { font-size: 14px; }
-  .goal-current-val { font-size: 16px; }
-  .goal-target-val { font-size: 12px; }
-  .weekly-save-box { padding: 8px 10px; }
-  .weekly-save-label { font-size: 10px; }
-  .weekly-save-amount { font-size: 15px; }
-  .weekly-save-sub { font-size: 10px; }
-  .goal-btn-row { gap: 6px; margin-top: 8px; }
-  .btn-deposit { padding: 6px 4px; font-size: 12px; }
+  /* Цели — 2 колонки, компактные карточки */
+  .goals-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .goal-card { padding: 10px 10px; }
+  .goal-name { font-size: 12px; }
+  .goal-date { font-size: 10px; }
+  .goal-current-val { font-size: 14px; }
+  .goal-target-val { font-size: 11px; }
+  .goal-pct { font-size: 10px; }
+  .weekly-save-box { padding: 6px 8px; margin-bottom: 6px; }
+  .weekly-save-label { font-size: 9px; }
+  .weekly-save-amount { font-size: 13px; }
+  .weekly-save-sub { font-size: 9px; }
+  /* Кнопки: Пополнить + Снять в ряд, История отдельно */
+  .goal-btn-row { flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .goal-btn-row .btn-deposit { flex: 1 1 40%; padding: 5px 2px; font-size: 10px; }
+  .goal-btn-row .btn-history { flex: 1 1 100%; }
 }
