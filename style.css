@@ -533,9 +533,16 @@ button, a, input, select, textarea, label {
   .filter-row { flex-wrap: wrap; }
   .select-filter { flex: 1; min-width: 120px; }
 
-  /* Цели — 2 колонки */
-  .goals-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .goal-card { padding: 14px; }
+  /* Цели — 1 колонка, компактные карточки */
+  .goals-grid { grid-template-columns: 1fr; gap: 10px; }
+  .goal-card { padding: 12px 14px; }
+  .goal-name { font-size: 14px; }
   .goal-current-val { font-size: 16px; }
-  .weekly-save-amount { font-size: 16px; }
+  .goal-target-val { font-size: 12px; }
+  .weekly-save-box { padding: 8px 10px; }
+  .weekly-save-label { font-size: 10px; }
+  .weekly-save-amount { font-size: 15px; }
+  .weekly-save-sub { font-size: 10px; }
+  .goal-btn-row { gap: 6px; margin-top: 8px; }
+  .btn-deposit { padding: 6px 4px; font-size: 12px; }
 }
