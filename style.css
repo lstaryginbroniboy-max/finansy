@@ -400,8 +400,12 @@ body {
   width: 100%; border: none; outline: none; background: transparent;
   font-size: 14px; color: var(--text); font-family: var(--font); padding: 2px 0;
 }
-.plan-row-input:focus { border-bottom: 1px solid var(--accent); }
-.plan-amount-input { text-align: right; font-weight: 600; }
+.plan-text-input:focus { border-bottom: 1px solid var(--accent); }
+.plan-amount-input:focus { outline: none; }
+.plan-amount-wrap { display: flex; align-items: center; gap: 4px; background: var(--accent); border-radius: var(--radius-sm); padding: 6px 10px; }
+.plan-amount-input { text-align: right; font-weight: 700; color: #fff; flex: 1; min-width: 0; }
+.plan-amount-input::placeholder { color: rgba(255,255,255,0.6); }
+.plan-amount-cur { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; }
 .plan-balance-negative { background: var(--red) !important; border-color: var(--red) !important; }
 
 /* ─── Settings ─── */
