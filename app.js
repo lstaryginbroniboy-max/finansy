@@ -80,6 +80,7 @@ function refreshTab(name) {
   if (name === 'income')    renderIncome();
   if (name === 'expenses')  renderExpenses();
   if (name === 'goals')     renderGoals();
+  if (name === 'planning')  renderPlanning();
   if (name === 'settings')  renderSettings();
 }
 
@@ -718,6 +719,81 @@ document.getElementById('saveGoal').addEventListener('click', () => {
 function populateCatSelect(id, cats) {
   document.getElementById(id).innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
 }
+
+// ═══════════════════════════════════════════════
+// PLANNING
+// ═══════════════════════════════════════════════
+let planState = DB.get('fin_plan', { budget: 0, rows: [] });
+
+function savePlan() {
+  const budget = Number(document.getElementById('planBudget').value) || 0;
+  const rows = [];
+  document.querySelectorAll('#planTableBody tr').forEach(tr => {
+    rows.push({
+      id: tr.dataset.id,
+      text: tr.querySelector('.plan-text-input').value,
+      amount: Number(tr.querySelector('.plan-amount-input').value) || 0
+    });
+  });
+  planState = { budget, rows };
+  DB.set('fin_plan', planState);
+  updatePlanBalance();
+}
+
+function updatePlanBalance() {
+  const budget = Number(document.getElementById('planBudget').value) || 0;
+  let total = 0;
+  document.querySelectorAll('.plan-amount-input').forEach(inp => {
+    total += Number(inp.value) || 0;
+  });
+  const rest = budget - total;
+  const el = document.getElementById('planBalance');
+  const box = document.getElementById('planBalanceBox');
+  el.textContent = rest.toLocaleString('ru-RU') + ' ' + (state.settings.currency || '₽');
+  box.classList.toggle('plan-balance-negative', rest < 0);
+}
+
+function renderPlanRow(row) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = row.id;
+  tr.innerHTML = `
+    <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Название статьи…" /></td>
+    <td><input class="plan-row-input plan-amount-input" type="number" value="${row.amount || ''}" placeholder="0" min="0" /></td>
+    <td style="white-space:nowrap">
+      <button class="btn-icon" title="Редактировать" onclick="this.closest('tr').querySelector('.plan-text-input').select()">✏️</button>
+      <button class="btn-icon" title="Удалить" onclick="deletePlanRow('${row.id}')">🗑</button>
+    </td>`;
+  tr.querySelector('.plan-text-input').addEventListener('input', savePlan);
+  tr.querySelector('.plan-amount-input').addEventListener('input', savePlan);
+  return tr;
+}
+
+function renderPlanning() {
+  document.getElementById('planBudget').value = planState.budget || '';
+  const tbody = document.getElementById('planTableBody');
+  tbody.innerHTML = '';
+  planState.rows.forEach(row => tbody.appendChild(renderPlanRow(row)));
+  updatePlanBalance();
+}
+
+window.deletePlanRow = function(id) {
+  const text = document.querySelector(`tr[data-id="${id}"] .plan-text-input`)?.value || 'эту строку';
+  if (!confirm(`Удалить строку «${text || 'без названия'}»?`)) return;
+  planState.rows = planState.rows.filter(r => r.id !== id);
+  DB.set('fin_plan', planState);
+  document.querySelector(`tr[data-id="${id}"]`).remove();
+  updatePlanBalance();
+};
+
+document.getElementById('addPlanRowBtn').addEventListener('click', () => {
+  const row = { id: uid(), text: '', amount: 0 };
+  planState.rows.push(row);
+  document.getElementById('planTableBody').appendChild(renderPlanRow(row));
+  DB.set('fin_plan', planState);
+  updatePlanBalance();
+});
+
+document.getElementById('planBudget').addEventListener('input', savePlan);
 
 // ── Filters live update ───────────────────────
 ['incomeMonthFilter','incomeCatFilter'].forEach(id => {

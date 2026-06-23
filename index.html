@@ -29,6 +29,9 @@
         <button class="nav-item" data-tab="goals">
           <span class="nav-icon">🎯</span><span>Цели</span>
         </button>
+        <button class="nav-item" data-tab="planning">
+          <span class="nav-icon">📋</span><span>Планирование</span>
+        </button>
         <button class="nav-item" data-tab="settings">
           <span class="nav-icon">⚙️</span><span>Настройки</span>
         </button>
@@ -136,6 +139,42 @@
         </div>
         <div id="goalsGrid" class="goals-grid"></div>
         <div class="empty-state" id="goalsEmpty">Пока нет целей. Добавьте первую!</div>
+      </section>
+
+      <!-- PLANNING -->
+      <section class="tab" id="tab-planning">
+        <div class="page-header">
+          <h1>Планирование</h1>
+        </div>
+
+        <div class="plan-top-row">
+          <div class="plan-budget-box">
+            <div class="plan-box-label">Общий бюджет</div>
+            <input type="number" id="planBudget" class="plan-budget-input" placeholder="0" min="0" />
+          </div>
+          <div class="plan-balance-box" id="planBalanceBox">
+            <div class="plan-box-label">Итоговый остаток</div>
+            <div id="planBalance" class="plan-balance-value">0 ₽</div>
+          </div>
+        </div>
+
+        <div class="section-box" style="margin-top:20px">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Статья</th>
+                  <th style="width:160px">Сумма</th>
+                  <th style="width:80px"></th>
+                </tr>
+              </thead>
+              <tbody id="planTableBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn-secondary" id="addPlanRowBtn">+ Добавить строку</button>
+          </div>
+        </div>
       </section>
 
       <!-- SETTINGS -->
