@@ -31,6 +31,20 @@ const fmt = (n) => {
   const s = state.settings;
   return Number(n).toLocaleString('ru-RU') + ' ' + (s.currency || '₽');
 };
+const parseNum = (v) => parseFloat(String(v).replace(/\s/g, '').replace(',', '.')) || 0;
+const fmtNum  = (n) => n ? Number(n).toLocaleString('ru-RU') : '';
+
+function setupNumInput(el) {
+  el.addEventListener('focus', function() {
+    const raw = parseNum(this.value);
+    this.value = raw || '';
+  });
+  el.addEventListener('blur', function() {
+    const n = parseNum(this.value);
+    this.value = n ? fmtNum(n) : '';
+  });
+}
+
 const today = () => new Date().toISOString().slice(0, 10);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 const monthLabel = (d) => new Date(d + '-01').toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
@@ -384,7 +398,7 @@ window.openDeposit = function(id, mode = 'add') {
 };
 
 document.getElementById('saveGoalDeposit').addEventListener('click', () => {
-  const amt = Number(document.getElementById('goalDepositAmount').value);
+  const amt = parseNum(document.getElementById('goalDepositAmount').value);
   if (!amt || amt <= 0) return alert('Введите сумму');
   const g = state.goals.find(g => g.id === depositGoalId);
   if (!g) return;
@@ -608,7 +622,7 @@ document.getElementById('saveIncome').addEventListener('click', () => {
   const date   = document.getElementById('incomeDate').value;
   const desc   = document.getElementById('incomeDesc').value.trim();
   const cat    = document.getElementById('incomeCat').value;
-  const amount = Number(document.getElementById('incomeAmount').value);
+  const amount = parseNum(document.getElementById('incomeAmount').value);
   const repeat = document.getElementById('incomeRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
   state.income.push({ id: uid(), date, desc, category: cat, amount, repeat });
@@ -629,7 +643,7 @@ document.getElementById('saveExpense').addEventListener('click', () => {
   const date   = document.getElementById('expenseDate').value;
   const desc   = document.getElementById('expenseDesc').value.trim();
   const cat    = document.getElementById('expenseCat').value;
-  const amount = Number(document.getElementById('expenseAmount').value);
+  const amount = parseNum(document.getElementById('expenseAmount').value);
   const repeat = document.getElementById('expenseRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
   state.expenses.push({ id: uid(), date, desc, category: cat, amount, repeat });
@@ -698,8 +712,8 @@ function setPhotoPreview(src) {
 
 document.getElementById('saveGoal').addEventListener('click', () => {
   const name        = document.getElementById('goalName').value.trim();
-  const target      = Number(document.getElementById('goalTarget').value);
-  const current     = Number(document.getElementById('goalCurrent').value) || 0;
+  const target      = parseNum(document.getElementById('goalTarget').value);
+  const current     = parseNum(document.getElementById('goalCurrent').value);
   const date        = document.getElementById('goalDate').value;
   const color       = document.getElementById('goalColor').value;
   const frequency   = document.getElementById('goalFrequency').value;
@@ -726,13 +740,13 @@ function populateCatSelect(id, cats) {
 let planState = DB.get('fin_plan', { budget: 0, rows: [] });
 
 function savePlan() {
-  const budget = Number(document.getElementById('planBudget').value) || 0;
+  const budget = parseNum(document.getElementById('planBudget').value);
   const rows = [];
   document.querySelectorAll('#planTableBody tr').forEach(tr => {
     rows.push({
       id: tr.dataset.id,
       text: tr.querySelector('.plan-text-input').value,
-      amount: Number(tr.querySelector('.plan-amount-input').value) || 0
+      amount: parseNum(tr.querySelector('.plan-amount-input').value)
     });
   });
   planState = { budget, rows };
@@ -741,10 +755,10 @@ function savePlan() {
 }
 
 function updatePlanBalance() {
-  const budget = Number(document.getElementById('planBudget').value) || 0;
+  const budget = parseNum(document.getElementById('planBudget').value);
   let total = 0;
   document.querySelectorAll('.plan-amount-input').forEach(inp => {
-    total += Number(inp.value) || 0;
+    total += parseNum(inp.value);
   });
   const rest = budget - total;
   const el = document.getElementById('planBalance');
@@ -758,18 +772,20 @@ function renderPlanRow(row) {
   tr.dataset.id = row.id;
   tr.innerHTML = `
     <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Наименование" /></td>
-    <td><div class="plan-amount-wrap"><input class="plan-row-input plan-amount-input" type="number" value="${row.amount || ''}" placeholder="0" min="0" /><span class="plan-amount-cur">${state.settings.currency || '₽'}</span></div></td>
+    <td><div class="plan-amount-wrap"><input class="plan-row-input plan-amount-input" type="text" inputmode="numeric" value="${row.amount ? fmtNum(row.amount) : ''}" placeholder="0" /><span class="plan-amount-cur">${state.settings.currency || '₽'}</span></div></td>
     <td style="white-space:nowrap">
       <button class="btn-icon" title="Редактировать" onclick="this.closest('tr').querySelector('.plan-text-input').select()">✏️</button>
       <button class="btn-icon" title="Удалить" onclick="deletePlanRow('${row.id}')">🗑</button>
     </td>`;
   tr.querySelector('.plan-text-input').addEventListener('input', savePlan);
-  tr.querySelector('.plan-amount-input').addEventListener('input', savePlan);
+  const amtInp = tr.querySelector('.plan-amount-input');
+  amtInp.addEventListener('input', savePlan);
+  setupNumInput(amtInp);
   return tr;
 }
 
 function renderPlanning() {
-  document.getElementById('planBudget').value = planState.budget || '';
+  document.getElementById('planBudget').value = planState.budget ? fmtNum(planState.budget) : '';
   const tbody = document.getElementById('planTableBody');
   tbody.innerHTML = '';
   planState.rows.forEach(row => tbody.appendChild(renderPlanRow(row)));
@@ -807,6 +823,11 @@ document.getElementById('planBudget').addEventListener('input', savePlan);
 // INIT
 // ═══════════════════════════════════════════════
 applyTheme(state.settings.theme);
+
+['incomeAmount','expenseAmount','goalTarget','goalCurrent','goalDepositAmount','planBudget'].forEach(id => {
+  setupNumInput(document.getElementById(id));
+});
+
 const savedTab = localStorage.getItem('fin_active_tab') || 'dashboard';
 switchTab(savedTab);
 updateSidebar();

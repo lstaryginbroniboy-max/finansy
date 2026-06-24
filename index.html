@@ -150,7 +150,7 @@
         <div class="plan-top-row">
           <div class="plan-budget-box">
             <div class="plan-box-label">Общий бюджет</div>
-            <input type="number" id="planBudget" class="plan-budget-input" placeholder="0" min="0" />
+            <input type="text" inputmode="numeric" id="planBudget" class="plan-budget-input" placeholder="0" />
           </div>
           <div class="plan-balance-box" id="planBalanceBox">
             <div class="plan-box-label">Итоговый остаток</div>
@@ -257,7 +257,7 @@
         <label>Категория</label>
         <select id="incomeCat" class="input-text"></select>
         <label>Сумма</label>
-        <input type="number" id="incomeAmount" class="input-text" placeholder="0" min="0" />
+        <input type="text" inputmode="numeric" id="incomeAmount" class="input-text" placeholder="0" />
         <label>Повторение</label>
         <select id="incomeRepeat" class="input-text">
           <option value="none">Без повторения</option>
@@ -284,7 +284,7 @@
         <label>Категория</label>
         <select id="expenseCat" class="input-text"></select>
         <label>Сумма</label>
-        <input type="number" id="expenseAmount" class="input-text" placeholder="0" min="0" />
+        <input type="text" inputmode="numeric" id="expenseAmount" class="input-text" placeholder="0" />
         <label>Повторение</label>
         <select id="expenseRepeat" class="input-text">
           <option value="none">Без повторения</option>
@@ -307,9 +307,9 @@
         <label>Название цели</label>
         <input type="text" id="goalName" class="input-text" placeholder="Отпуск, iPhone, машина…" />
         <label>Целевая сумма</label>
-        <input type="number" id="goalTarget" class="input-text" placeholder="100000" min="0" />
+        <input type="text" inputmode="numeric" id="goalTarget" class="input-text" placeholder="100 000" />
         <label>Уже накоплено</label>
-        <input type="number" id="goalCurrent" class="input-text" placeholder="0" min="0" />
+        <input type="text" inputmode="numeric" id="goalCurrent" class="input-text" placeholder="0" />
         <label>Дата достижения</label>
         <input type="date" id="goalDate" class="input-text" />
         <label>Частота откладывания</label>
@@ -348,7 +348,7 @@
       <div class="modal-header"><h2 id="goalDepositTitle">Пополнить цель</h2><button class="modal-close" data-close="goalDepositModal">✕</button></div>
       <div class="modal-body">
         <label>Сумма пополнения</label>
-        <input type="number" id="goalDepositAmount" class="input-text" placeholder="0" min="0" />
+        <input type="text" inputmode="numeric" id="goalDepositAmount" class="input-text" placeholder="0" />
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" data-close="goalDepositModal">Отмена</button>
