@@ -757,7 +757,7 @@ function renderPlanRow(row) {
   const tr = document.createElement('tr');
   tr.dataset.id = row.id;
   tr.innerHTML = `
-    <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Название статьи…" /></td>
+    <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Наименование" /></td>
     <td><div class="plan-amount-wrap"><input class="plan-row-input plan-amount-input" type="number" value="${row.amount || ''}" placeholder="0" min="0" /><span class="plan-amount-cur">${state.settings.currency || '₽'}</span></div></td>
     <td style="white-space:nowrap">
       <button class="btn-icon" title="Редактировать" onclick="this.closest('tr').querySelector('.plan-text-input').select()">✏️</button>
