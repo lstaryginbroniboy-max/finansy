@@ -774,7 +774,6 @@ function renderPlanRow(row) {
     <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Наименование" /></td>
     <td><div class="plan-amount-wrap"><input class="plan-row-input plan-amount-input" type="text" inputmode="numeric" value="${row.amount ? fmtNum(row.amount) : ''}" placeholder="0" /><span class="plan-amount-cur">${state.settings.currency || '₽'}</span></div></td>
     <td style="white-space:nowrap">
-      <button class="btn-icon" title="Редактировать" onclick="this.closest('tr').querySelector('.plan-text-input').select()">✏️</button>
       <button class="btn-icon" title="Удалить" onclick="deletePlanRow('${row.id}')">🗑</button>
     </td>`;
   tr.querySelector('.plan-text-input').addEventListener('input', savePlan);
