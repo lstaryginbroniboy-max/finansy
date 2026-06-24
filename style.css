@@ -402,11 +402,21 @@ body {
 }
 .plan-text-input:focus { border-bottom: 1px solid var(--accent); }
 .plan-amount-input:focus { outline: none; }
-.plan-table { min-width: 0; table-layout: fixed; }
-.plan-table td:first-child { width: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.plan-table td:nth-child(2) { width: 120px; }
-.plan-table td:nth-child(3) { width: 40px; }
-.plan-amount-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 3px; background: var(--accent); border-radius: var(--radius-sm); padding: 5px 7px; }
+.plan-list-header {
+  display: flex; justify-content: space-between;
+  padding: 0 0 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  color: var(--text2); text-transform: uppercase;
+}
+.plan-list-header span:last-child { padding-right: 36px; }
+.plan-list { display: flex; flex-direction: column; }
+.plan-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.plan-row:last-child { border-bottom: none; }
+.plan-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.plan-amount-wrap { display: flex; align-items: center; gap: 3px; background: var(--accent); border-radius: var(--radius-sm); padding: 5px 8px; width: 108px; flex-shrink: 0; }
 .plan-amount-input { text-align: right; font-weight: 700; color: #fff; flex: 1; min-width: 0; }
 .plan-amount-input::placeholder { color: rgba(255,255,255,0.6); }
 .plan-amount-cur { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; }
@@ -605,11 +615,9 @@ button, a, input, select, textarea, label {
   /* Таблица — скролл по горизонтали */
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .data-table { min-width: 420px; }
-  /* Планирование — без горизонтального скролла */
-  .plan-table { min-width: 0 !important; }
-  .plan-table td:nth-child(2) { width: 115px; }
-  .plan-table td:nth-child(3) { width: 36px; }
-  .plan-amount-wrap { padding: 4px 6px; }
+  /* Планирование — компактнее на мобильном */
+  .plan-section { padding: 14px; }
+  .plan-amount-wrap { width: 100px; padding: 4px 6px; }
   .plan-amount-input { font-size: 13px; }
   .plan-amount-cur { font-size: 12px; }
 

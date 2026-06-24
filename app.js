@@ -742,11 +742,11 @@ let planState = DB.get('fin_plan', { budget: 0, rows: [] });
 function savePlan() {
   const budget = parseNum(document.getElementById('planBudget').value);
   const rows = [];
-  document.querySelectorAll('#planTableBody tr').forEach(tr => {
+  document.querySelectorAll('#planTableBody .plan-row').forEach(row => {
     rows.push({
-      id: tr.dataset.id,
-      text: tr.querySelector('.plan-text-input').value,
-      amount: parseNum(tr.querySelector('.plan-amount-input').value)
+      id: row.dataset.id,
+      text: row.querySelector('.plan-text-input').value,
+      amount: parseNum(row.querySelector('.plan-amount-input').value)
     });
   });
   planState = { budget, rows };
@@ -768,19 +768,23 @@ function updatePlanBalance() {
 }
 
 function renderPlanRow(row) {
-  const tr = document.createElement('tr');
-  tr.dataset.id = row.id;
-  tr.innerHTML = `
-    <td><input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Наименование" /></td>
-    <td><div class="plan-amount-wrap"><input class="plan-row-input plan-amount-input" type="text" inputmode="numeric" value="${row.amount ? fmtNum(row.amount) : ''}" placeholder="0" /><span class="plan-amount-cur">${state.settings.currency || '₽'}</span></div></td>
-    <td style="white-space:nowrap">
-      <button class="btn-icon" title="Удалить" onclick="deletePlanRow('${row.id}')">🗑</button>
-    </td>`;
-  tr.querySelector('.plan-text-input').addEventListener('input', savePlan);
-  const amtInp = tr.querySelector('.plan-amount-input');
+  const div = document.createElement('div');
+  div.className = 'plan-row';
+  div.dataset.id = row.id;
+  div.innerHTML = `
+    <input class="plan-row-input plan-text-input" type="text" value="${row.text}" placeholder="Наименование" />
+    <div class="plan-row-right">
+      <div class="plan-amount-wrap">
+        <input class="plan-row-input plan-amount-input" type="text" inputmode="numeric" value="${row.amount ? fmtNum(row.amount) : ''}" placeholder="0" />
+        <span class="plan-amount-cur">${state.settings.currency || '₽'}</span>
+      </div>
+      <button class="btn-icon" title="Удалить" onclick="deletePlanRow('${div.dataset.id}')">🗑</button>
+    </div>`;
+  div.querySelector('.plan-text-input').addEventListener('input', savePlan);
+  const amtInp = div.querySelector('.plan-amount-input');
   amtInp.addEventListener('input', savePlan);
   setupNumInput(amtInp);
-  return tr;
+  return div;
 }
 
 function renderPlanning() {
@@ -792,11 +796,11 @@ function renderPlanning() {
 }
 
 window.deletePlanRow = function(id) {
-  const text = document.querySelector(`tr[data-id="${id}"] .plan-text-input`)?.value || 'эту строку';
+  const text = document.querySelector(`.plan-row[data-id="${id}"] .plan-text-input`)?.value || '';
   if (!confirm(`Удалить строку «${text || 'без названия'}»?`)) return;
   planState.rows = planState.rows.filter(r => r.id !== id);
   DB.set('fin_plan', planState);
-  document.querySelector(`tr[data-id="${id}"]`).remove();
+  document.querySelector(`.plan-row[data-id="${id}"]`).remove();
   updatePlanBalance();
 };
 
