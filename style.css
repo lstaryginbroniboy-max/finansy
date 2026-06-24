@@ -402,7 +402,11 @@ body {
 }
 .plan-text-input:focus { border-bottom: 1px solid var(--accent); }
 .plan-amount-input:focus { outline: none; }
-.plan-amount-wrap { display: flex; align-items: center; gap: 4px; background: var(--accent); border-radius: var(--radius-sm); padding: 6px 10px; }
+.plan-table { min-width: 0 !important; table-layout: fixed; }
+.plan-table td:first-child { width: auto; }
+.plan-table td:nth-child(2) { width: 130px; }
+.plan-table td:nth-child(3) { width: 44px; }
+.plan-amount-wrap { display: flex; align-items: center; gap: 4px; background: var(--accent); border-radius: var(--radius-sm); padding: 6px 8px; }
 .plan-amount-input { text-align: right; font-weight: 700; color: #fff; flex: 1; min-width: 0; }
 .plan-amount-input::placeholder { color: rgba(255,255,255,0.6); }
 .plan-amount-cur { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; }
