@@ -406,12 +406,16 @@ document.getElementById('saveGoalDeposit').addEventListener('click', () => {
   if (depositMode === 'add') {
     g.current = Math.min(g.target, g.current + amt);
     g.history.push({ date: today(), type: 'add', amount: amt });
+    // Автоматически создаём расход
+    state.expenses.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none' });
   } else {
     if (amt > g.current) return alert(`Нельзя снять больше накопленного (${fmt(g.current)})`);
     g.current = g.current - amt;
     g.history.push({ date: today(), type: 'sub', amount: amt });
+    // Автоматически создаём доход
+    state.income.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none' });
   }
-  save(); closeModal('goalDepositModal'); renderGoals();
+  save(); closeModal('goalDepositModal'); refreshAll();
 });
 
 // ═══════════════════════════════════════════════
