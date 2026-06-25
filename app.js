@@ -70,6 +70,7 @@ function save() {
 
 // ── Tab navigation ───────────────────────────
 function switchTab(name) {
+  if (!document.getElementById('tab-' + name)) name = 'dashboard';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
