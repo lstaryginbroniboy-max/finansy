@@ -628,7 +628,6 @@ document.querySelectorAll('.modal-overlay').forEach(ov => {
 // ── Income Modal ──────────────────────────────
 document.getElementById('openIncomeModal').addEventListener('click', () => {
   document.getElementById('incomeDate').value   = today();
-  document.getElementById('incomeDesc').value   = '';
   document.getElementById('incomeAmount').value = '';
   document.getElementById('incomeRepeat').value = 'none';
   populateCatSelect('incomeCat', state.settings.incomeCats);
@@ -648,7 +647,6 @@ document.getElementById('saveIncome').addEventListener('click', () => {
 // ── Expense Modal ─────────────────────────────
 document.getElementById('openExpenseModal').addEventListener('click', () => {
   document.getElementById('expenseDate').value   = today();
-  document.getElementById('expenseDesc').value   = '';
   document.getElementById('expenseAmount').value = '';
   document.getElementById('expenseRepeat').value = 'none';
   populateCatSelect('expenseCat', state.settings.expenseCats);
