@@ -201,12 +201,12 @@ function renderIncome() {
 
   const tbody = document.getElementById('incomeTableBody');
   tbody.innerHTML = rows.map(t => `
-    <tr>
-      <td>${formatDate(t.date)}</td>
-      <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
-      <td><div class="tx-amount-cell" style="color:var(--green)">+<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('income','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div></td>
-      <td><button class="btn-icon" onclick="deleteTransaction('income','${t.id}')">🗑</button></td>
-    </tr>`).join('');
+    <div class="tx-row">
+      <span class="tx-date">${formatDate(t.date)}</span>
+      <span class="tx-cat"><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</span>
+      <div class="tx-amount-cell" style="color:var(--green)">+<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('income','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div>
+      <button class="btn-icon" onclick="deleteTransaction('income','${t.id}')">🗑</button>
+    </div>`).join('');
 
   document.getElementById('incomeEmpty').style.display = rows.length ? 'none' : 'block';
 }
@@ -245,12 +245,12 @@ function renderExpenses() {
 
   const tbody = document.getElementById('expenseTableBody');
   tbody.innerHTML = rows.map(t => `
-    <tr>
-      <td>${formatDate(t.date)}</td>
-      <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
-      <td><div class="tx-amount-cell" style="color:var(--red)">-<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('expenses','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div></td>
-      <td><button class="btn-icon" onclick="deleteTransaction('expenses','${t.id}')">🗑</button></td>
-    </tr>`).join('');
+    <div class="tx-row">
+      <span class="tx-date">${formatDate(t.date)}</span>
+      <span class="tx-cat"><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</span>
+      <div class="tx-amount-cell" style="color:var(--red)">-<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('expenses','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div>
+      <button class="btn-icon" onclick="deleteTransaction('expenses','${t.id}')">🗑</button>
+    </div>`).join('');
 
   document.getElementById('expenseEmpty').style.display = rows.length ? 'none' : 'block';
 }
