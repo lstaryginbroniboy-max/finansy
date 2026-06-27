@@ -625,12 +625,11 @@ document.getElementById('openIncomeModal').addEventListener('click', () => {
 
 document.getElementById('saveIncome').addEventListener('click', () => {
   const date   = document.getElementById('incomeDate').value;
-  const desc   = document.getElementById('incomeDesc').value.trim();
   const cat    = document.getElementById('incomeCat').value;
   const amount = parseNum(document.getElementById('incomeAmount').value);
   const repeat = document.getElementById('incomeRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
-  state.income.push({ id: uid(), date, desc, category: cat, amount, repeat, createdAt: Date.now() });
+  state.income.push({ id: uid(), date, desc: '', category: cat, amount, repeat, createdAt: Date.now() });
   save(); closeModal('incomeModal'); refreshAll();
 });
 
@@ -646,12 +645,11 @@ document.getElementById('openExpenseModal').addEventListener('click', () => {
 
 document.getElementById('saveExpense').addEventListener('click', () => {
   const date   = document.getElementById('expenseDate').value;
-  const desc   = document.getElementById('expenseDesc').value.trim();
   const cat    = document.getElementById('expenseCat').value;
   const amount = parseNum(document.getElementById('expenseAmount').value);
   const repeat = document.getElementById('expenseRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
-  state.expenses.push({ id: uid(), date, desc, category: cat, amount, repeat, createdAt: Date.now() });
+  state.expenses.push({ id: uid(), date, desc: '', category: cat, amount, repeat, createdAt: Date.now() });
   save(); closeModal('expenseModal'); refreshAll();
 });
 
