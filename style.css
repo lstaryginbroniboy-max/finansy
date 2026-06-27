@@ -243,7 +243,8 @@ body {
 .tx-row:last-child { border-bottom: none; }
 .tx-row:hover { background: var(--bg); }
 .tx-date { font-size: 12px; color: var(--text2); flex-shrink: 0; width: 52px; }
-.tx-cat { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tx-cat { flex: 1; min-width: 0; }
+.tx-cat .cat-badge { white-space: normal; word-break: break-word; }
 .cat-badge {
   display: inline-block; padding: 2px 8px;
   border-radius: 12px; font-size: 11px; font-weight: 500;
