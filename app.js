@@ -204,7 +204,7 @@ function renderIncome() {
     <tr>
       <td>${formatDate(t.date)}</td>
       <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
-      <td style="color:var(--green);font-weight:600">+${fmt(t.amount)}</td>
+      <td><div class="tx-amount-cell" style="color:var(--green)">+<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('income','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div></td>
       <td><button class="btn-icon" onclick="deleteTransaction('income','${t.id}')">🗑</button></td>
     </tr>`).join('');
 
@@ -248,12 +248,24 @@ function renderExpenses() {
     <tr>
       <td>${formatDate(t.date)}</td>
       <td><span class="cat-badge">${t.category}</span>${t.repeat && t.repeat !== 'none' ? ' <span style="font-size:10px;color:var(--text2)">🔁</span>' : ''}</td>
-      <td style="color:var(--red);font-weight:600">-${fmt(t.amount)}</td>
+      <td><div class="tx-amount-cell" style="color:var(--red)">-<input class="tx-amount-input" type="text" inputmode="numeric" value="${fmtNum(t.amount)}" onfocus="this.value=String(parseNum(this.value)||'')" onblur="updateTransAmount('expenses','${t.id}',this)" onkeydown="if(event.key==='Enter')this.blur()" />${state.settings.currency||'₽'}</div></td>
       <td><button class="btn-icon" onclick="deleteTransaction('expenses','${t.id}')">🗑</button></td>
     </tr>`).join('');
 
   document.getElementById('expenseEmpty').style.display = rows.length ? 'none' : 'block';
 }
+
+window.updateTransAmount = function(type, id, el) {
+  const amt = parseNum(el.value);
+  if (amt > 0) {
+    const arr = type === 'income' ? state.income : state.expenses;
+    const t = arr.find(t => t.id === id);
+    if (t) { t.amount = amt; save(); }
+  }
+  if (type === 'income') renderIncome();
+  else renderExpenses();
+  updateSidebar();
+};
 
 // ── Delete transaction ────────────────────────
 window.deleteTransaction = function(type, id) {
