@@ -132,7 +132,7 @@ function renderDashboard() {
   const all = [
     ...state.income.map(t => ({ ...t, type: 'income' })),
     ...state.expenses.map(t => ({ ...t, type: 'expense' }))
-  ].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 11);
+  ].sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0) || b.date.localeCompare(a.date)).slice(0, 11);
 
   const container = document.getElementById('recentTransactions');
   if (!all.length) {
@@ -194,7 +194,7 @@ function renderIncome() {
   const cat   = document.getElementById('incomeCatFilter').value;
 
   let rows = state.income.filter(t => (!month || t.date.slice(0,7) === month) && (!cat || t.category === cat));
-  rows = rows.slice().sort((a,b) => b.date.localeCompare(a.date));
+  rows = rows.slice().sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0) || b.date.localeCompare(a.date));
 
   const total = rows.reduce((s,t) => s + Number(t.amount), 0);
   document.getElementById('incomeTotalLabel').textContent = fmt(total);
@@ -238,7 +238,7 @@ function renderExpenses() {
   const cat   = document.getElementById('expenseCatFilter').value;
 
   let rows = state.expenses.filter(t => (!month || t.date.slice(0,7) === month) && (!cat || t.category === cat));
-  rows = rows.slice().sort((a,b) => b.date.localeCompare(a.date));
+  rows = rows.slice().sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0) || b.date.localeCompare(a.date));
 
   const total = rows.reduce((s,t) => s + Number(t.amount), 0);
   document.getElementById('expenseTotalLabel').textContent = fmt(total);
@@ -408,13 +408,13 @@ document.getElementById('saveGoalDeposit').addEventListener('click', () => {
     g.current = Math.min(g.target, g.current + amt);
     g.history.push({ date: today(), type: 'add', amount: amt });
     // Автоматически создаём расход
-    state.expenses.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none' });
+    state.expenses.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none', createdAt: Date.now() });
   } else {
     if (amt > g.current) return alert(`Нельзя снять больше накопленного (${fmt(g.current)})`);
     g.current = g.current - amt;
     g.history.push({ date: today(), type: 'sub', amount: amt });
     // Автоматически создаём доход
-    state.income.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none' });
+    state.income.push({ id: uid(), date: today(), desc: 'Цель: ' + g.name, category: g.name, amount: amt, repeat: 'none', createdAt: Date.now() });
   }
   save(); closeModal('goalDepositModal'); refreshAll();
 });
@@ -630,7 +630,7 @@ document.getElementById('saveIncome').addEventListener('click', () => {
   const amount = parseNum(document.getElementById('incomeAmount').value);
   const repeat = document.getElementById('incomeRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
-  state.income.push({ id: uid(), date, desc, category: cat, amount, repeat });
+  state.income.push({ id: uid(), date, desc, category: cat, amount, repeat, createdAt: Date.now() });
   save(); closeModal('incomeModal'); refreshAll();
 });
 
@@ -651,7 +651,7 @@ document.getElementById('saveExpense').addEventListener('click', () => {
   const amount = parseNum(document.getElementById('expenseAmount').value);
   const repeat = document.getElementById('expenseRepeat').value;
   if (!date || !amount || amount <= 0) return alert('Заполните дату и сумму');
-  state.expenses.push({ id: uid(), date, desc, category: cat, amount, repeat });
+  state.expenses.push({ id: uid(), date, desc, category: cat, amount, repeat, createdAt: Date.now() });
   save(); closeModal('expenseModal'); refreshAll();
 });
 
