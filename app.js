@@ -122,10 +122,12 @@ function renderDashboard() {
     .reduce((s,t) => s + Number(t.amount), 0);
   const monthExp = state.expenses.filter(t => t.date.slice(0,7) === now)
     .reduce((s,t) => s + Number(t.amount), 0);
+  const allInc = state.income.reduce((s,t) => s + Number(t.amount), 0);
+  const allExp = state.expenses.reduce((s,t) => s + Number(t.amount), 0);
 
   document.getElementById('dashIncome').textContent  = fmt(monthInc);
   document.getElementById('dashExpense').textContent = fmt(monthExp);
-  document.getElementById('dashBalance').textContent = fmt(monthInc - monthExp);
+  document.getElementById('dashBalance').textContent = fmt(allInc - allExp);
   document.getElementById('dashGoals').textContent   = state.goals.length;
 
   // Recent transactions (last 8)
